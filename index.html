@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Series</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #f8f9fa; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+    .navbar { background: linear-gradient(135deg, #1e00ff, #a29bfe); }
+    .hero { padding: 100px 20px; text-align: center; background: url("https://www.seriesdatv.pt/wp-content/uploads/2025/08/calendario-estreias-grid-posters-agosto-2025.jpg.webp") no-repeat center center; background-size: cover; color: white; position: relative; }
+    .hero::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
+    .hero-content { position: relative; z-index: 1; }
+    .section-title { margin: 30px 0 15px; border-left: 5px solid #1e00ff; padding-left: 10px; }
+    table th { background-color: #1e00ff; color: white; text-align: center; }
+    table td { vertical-align: middle; text-align: center; }
+    .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; }
+    .status-siguiendo { background-color: #0984e3; color: white; }
+    .status-terminada { background-color: #00b894; color: white; }
+    .status-pendiente { background-color: #fdcb6e; color: #2d3436; }
+    .status-abandonada { background-color: #d63031; color: white; }
+    .recomendada { color: #00b894; font-weight: bold; }
+    .no-recomendada { color: #d63031; font-weight: bold; }
+    .regular { color: #fdcb6e; font-weight: bold; }
+    footer { margin-top: 50px; background: #2d3436; color: white; padding: 30px 0; text-align: center; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark shadow">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#"><i class=""></i>Mis Series</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="display-4 fw-bold">📺 Mi Tracker de Series 📺</h1>
+      <p class="lead">Esta página reúne todas las series que vi, las que estoy viendo y las que aún tengo pendientes</p>
+    </div>
+  </section>
+
+  <!-- Filtros -->
+  <div class="container mt-4">
+    <h2 class="section-title">Elegí Plataforma y Género</h2>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <select id="platformFilter" class="form-select">
+          <option value="all">Todas las plataformas</option>
+          <option>Netflix</option>
+          <option>Prime Video</option>
+          <option>Disney+</option>
+          <option>HBO</option>
+          <option>Apple Tv</option>
+          <option>Paramount</option>
+          <option>Otro</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select id="genreFilter" class="form-select">
+          <option value="all">Todos los géneros</option>
+          <option>Drama</option>
+          <option>Comedia</option>
+          <option>Acción</option>
+          <option>Terror</option>
+          <option>Ciencia Ficción</option>
+          <option>Fantasía</option>
+          <option>Suspenso</option>
+          <option>Misterio</option>
+          <option>Thriller</option>
+          <option>Animada</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select id="ratingFilter" class="form-select">
+          <option value="all">Todas las puntuaciones</option>
+          <option value="0-3">0 a 3</option>
+          <option value="3-5">3 a 5</option>
+          <option value="5-6">5 a 6</option>
+          <option value="6-7">6 a 7</option>
+          <option value="7-8">7 a 8</option>
+          <option value="8-9">8 a 9</option>
+          <option value="9-10">9 a 10</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección Vistas -->
+  <div class="container my-5">
+    <h2 class="section-title">✅ Series Vistas</h2>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Plataforma</th>
+            <th>Género</th>
+            <th>Temporadas</th>
+            <th>Estado</th>
+            <th>Puntuación</th>
+            <th>Opinión</th>
+            <th>Recomendación</th>
+          </tr>
+        </thead>
+        <tbody id="watchedSeries"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sección Pendientes -->
+  <div class="container my-5">
+    <h2 class="section-title">📌 Series Pendientes</h2>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Plataforma</th>
+            <th>Género</th>
+            <th>Temporadas</th>
+          </tr>
+        </thead>
+        <tbody id="pendingSeries"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Mis Series Anashei</p>
+  </footer>
+
+  <script>
+    // Todas las series directamente en el script
+    const series = [
+    {
+    "titulo": "Better Call Saul",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Drama",
+    "temporadas": "6/6",
+    "estado": "Terminada",
+    "puntuacion": 10,
+    "comentario": "Una de las mejores series que ví,probablemente, la mejor serie que eh visto...",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Breaking Bad",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "5/5",
+    "estado": "Terminada",
+    "puntuacion": 9.9,
+    "comentario": "Buenarda,una de las mejores que ví",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "El Marginal",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "5/5",
+    "estado": "Terminada",
+    "puntuacion": 9,
+    "comentario": "En lo personal, me encantó",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Los Simuladores",
+    "plataforma": "Netflix",
+    "genero": "Drama, Suspenso, Comedia",
+    "temporadas": "5/5",
+    "estado": "Terminada",
+    "puntuacion": 9.1,
+    "comentario": "Serie histórica,unas de las mejores de Argentina",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "The Boys",
+    "plataforma": "Prime Video",
+    "genero": "Acción, Comedia, Ciencia Ficción",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 9.3,
+    "comentario": "Una de mis favoritas,buenarda,completísima",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Peaky Blinders",
+    "plataforma": "Netflix",
+    "genero": "Drama, Suspenso",
+    "temporadas": "6/6",
+    "estado": "Terminada",
+    "puntuacion": 8.9,
+    "comentario": "Una de mis favoritas,es AURA pura",
+    "recomendacion": "Sí"
+  },
+
+  {
+    "titulo": "The Umbrella Academy",
+    "plataforma": "Netflix",
+    "genero": "Acción, Fantasía, Ciencia Ficción",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 7.2,
+    "comentario": "La última temp. malarda",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Control Z",
+    "plataforma": "Netflix",
+    "genero": "Drama, Suspenso",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "Ni fu ni fa,safable",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Gambito de Dama",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7,
+    "comentario": "Me gustó,puede ser lenteja",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Stranger Things",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción, Fantasía",
+    "temporadas": "5/6",
+    "estado": "siguiendo",
+    "puntuacion": 6.7,
+    "comentario": "Es buena,tiene su toque",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Riverdale",
+    "plataforma": "Netflix",
+    "genero": "Drama, Suspenso",
+    "temporadas": "5/7",
+    "estado": "Abandonada",
+    "puntuacion": 6,
+    "comentario": "Siempre es lo mismo,larguísima y aburre",
+    "recomendacion": "No"
+  },
+ {
+    "titulo": "Élite",
+    "plataforma": "Netflix",
+    "genero": "Drama, Suspenso",
+    "temporadas": "4/8",
+    "estado": "Abandonada",
+    "puntuacion": 6.3,
+    "comentario": "Después de la 3ra temp. la cagan,volvé Esterrr",
+    "recomendacion": "No"
+  },
+ {
+    "titulo": "La Casa de Papel",
+    "plataforma": "Netflix",
+    "genero": "Acción, Suspenso",
+    "temporadas": "5/5",
+    "estado": "Terminada",
+    "puntuacion": 6.8,
+    "comentario": "Buena serie para maratonear un finde",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "You",
+    "plataforma": "Netflix",
+    "genero": "Drama, Suspenso",
+    "temporadas": "5/5",
+    "estado": "Terminada",
+    "puntuacion": 6.6,
+    "comentario": "Esta buena para pasar la tarde",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Sherlock",
+    "plataforma": "Netflix",
+    "genero": "Suspenso",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 8,
+    "comentario": "Te re atrapa,me re gustó",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Euphoria",
+    "plataforma": "HBO",
+    "genero": "Drama",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "La vi en cuarentena,qsy,no me acuerdo nada jaja",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "The Rain",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción, Suspenso",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 6.7,
+    "comentario": "Buena serie,promedio pero tiene su toque",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Sex Education",
+    "plataforma": "Netflix",
+    "genero": "Drama, Comedia",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 7.3,
+    "comentario": "Al principio me re traume pero bue,ta buena,safa",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "El Guardaespaldas",
+    "plataforma": "Netflix",
+    "genero": "Drama, Suspenso",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7,
+    "comentario": "Cortita y al pie,pura acción,goood",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Black Mirror",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción, Suspenso",
+    "temporadas": "6/6",
+    "estado": "Terminada",
+    "puntuacion": 8.7,
+    "comentario": "Muy buenos caps,te dejan una reflexión",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "WandaVision",
+    "plataforma": "Netflix",
+    "genero": "Acción, Fantasía, Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.8,
+    "comentario": "Los primeros caps son re lentos,después despega",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Falcon y el Soldado del Invierno",
+    "plataforma": "Disney+",
+    "genero": "Acción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.8,
+    "comentario": "Marvel y acción,no hay mas que eso",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "Cómo vender drogas online",
+    "plataforma": "Netflix",
+    "genero": "Comedia, Drama",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 7.6,
+    "comentario": "Personalmente,me gustó mucho,basada en echos reales",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "La maldición de Hill House",
+    "plataforma": "Netflix",
+    "genero": "Terror",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5.7,
+    "comentario": "Safable",
+    "recomendacion": "No"
+  },
+{
+    "titulo": "The Punisher",
+    "plataforma": "Disney+",
+    "genero": "Acción",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 8.2,
+    "comentario": "Pura acción,me encanta,actorazo",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "The Society",
+    "plataforma": "Netflix",
+    "genero": "Misterio, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.4,
+    "comentario": "En su momento la ví y me re gustó,con ganas de una 2da temp.",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "Lupin",
+    "plataforma": "Netflix",
+    "genero": "Misterio, Acción",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 7.5,
+    "comentario": "Una serie bien echa,esta buenardaaa",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "Ratched",
+    "plataforma": "Netflix",
+    "genero": "Thriller",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "La vi por verla y safa,aprobada",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "Esta mierda me supera",
+    "plataforma": "Netflix",
+    "genero": "Comedia, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5,
+    "comentario": "Meh...",
+    "recomendacion": "No"
+  },
+{
+    "titulo": "Sky Rojo",
+    "plataforma": "Netflix",
+    "genero": "Acción, Thriller",
+    "temporadas": "2/3",
+    "estado": "Abandonada",
+    "puntuacion": 5.8,
+    "comentario": "No me llamó tanto la atención",
+    "recomendacion": "No"
+  },
+{
+    "titulo": "Titanes",
+    "plataforma": "Netflix",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 6.4,
+    "comentario": "Aprobada,para pasar el rato",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "El mundo oculto de Sabrina",
+    "plataforma": "Netflix",
+    "genero": "Fantasía, Terror",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 6.7,
+    "comentario": "Entretenida",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "Maniac",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción, Comedia",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.5,
+    "comentario": "Muy divertida y entretenida",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "El presidente",
+    "plataforma": "Prime Video",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5.4,
+    "comentario": "No tengo idea porque vi esto,se trata de un chiqui tapia chileno jaja",
+    "recomendacion": "No"
+  },
+  {
+    "titulo": "The Mandalorian",
+    "plataforma": "Disney+",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 6.9,
+    "comentario": "No pienso ver nunca StarsWars pero me sorprendió,ta buena",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Sense8",
+    "plataforma": "Netflix",
+    "genero": "Drama, Ciencia Ficción",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 8,
+    "comentario": "Fue la primer serie que ví,muy buena,la llevo en el cora ♥",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Mr. Robot",
+    "plataforma": "Prime Video",
+    "genero": "Thriller, Drama",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 9,
+    "comentario": "Buenardaaa,ojalá la hubiera visto antes",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Scream Queens",
+    "plataforma": "Disney+",
+    "genero": "Terror, Comedia, Misterio",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6.7,
+    "comentario": "Es una serie de chicas pero me gustó,qsy jajaja",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Equinox",
+    "plataforma": "Netflix",
+    "genero": "Terror, Drama, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 4,
+    "comentario": "Malarda,una re expectativa le tenía",
+    "recomendacion": "No"
+  },
+  {
+    "titulo": "Club de cuervos",
+    "plataforma": "Netflix",
+    "genero": "Comedia, Drama",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 7,
+    "comentario": "Muy graciosa y entretenida,se trata de fútbol mexicano y la corrupción entre clubes",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Muñeca Rusa",
+    "plataforma": "Netflix",
+    "genero": "Comedia, Drama",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6.5,
+    "comentario": "Capítulos cortos y te re atrapa,ta buena",
+    "recomendacion": "Sí"
+  },
+
+  {
+    "titulo": "Flash",
+    "plataforma": "Netflix",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "1/9",
+    "estado": "Abandonada",
+    "puntuacion": 5,
+    "comentario": "Me re aburrió,le tenía fé",
+    "recomendacion": "No"
+  },
+  {
+    "titulo": "El Internado: Las Cumbres",
+    "plataforma": "Prime Video",
+    "genero": "Misterio, Terror",
+    "temporadas": "2/3",
+    "estado": "siguiendo",
+    "puntuacion": 6,
+    "comentario": "Me atrapó al principio,pero después se hizo repetitiva",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Dr. House",
+    "plataforma": "HBO",
+    "genero": "Drama",
+    "temporadas": "2/8",
+    "estado": "siguiendo",
+    "puntuacion": 7.3,
+    "comentario": "Muy buena,tengo que retomarla",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Alex Rider",
+    "plataforma": "Prime Video",
+    "genero": "Acción",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6.6,
+    "comentario": "No es tan conocida pero me re gustó",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "The Witcher",
+    "plataforma": "Netflix",
+    "genero": "Fantasía",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 7.8,
+    "comentario": "Muy buena serie,tiene de todo,aprobadísima",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "¿Quién mató a Sara?",
+    "plataforma": "Netflix",
+    "genero": "Suspenso, Drama",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 5.8,
+    "comentario": "No es la gran cosa pero esta mirable",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "La chica nueva",
+    "plataforma": "Netflix",
+    "genero": "Suspenso, Fantasía",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 7.9,
+    "comentario": "Me sorprendió,serie koreana",
+    "recomendacion": "Sí"
+  },
+
+  {
+    "titulo": "Watchmen",
+    "plataforma": "HBO",
+    "genero": "Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5,
+    "comentario": "La terminé pero me recontra aburrió",
+    "recomendacion": "No"
+  },
+  {
+    "titulo": "Loki",
+    "plataforma": "Disney+",
+    "genero": "Ciencia Ficción, Fantasía",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 8.4,
+    "comentario": "Me encanta MARVEL y esta serie es buenísima,me re enganchó",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Ragnarok",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción, Fantasía",
+    "temporadas": "2/3",
+    "estado": "Abandonada",
+    "puntuacion": 6.2,
+    "comentario": "Aprobada,no mucho más qe decir",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Chernobyl",
+    "plataforma": "HBO",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 9,
+    "comentario": "Buenísima,histórica,una de las mejores",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "El juego del calamar",
+    "plataforma": "Netflix",
+    "genero": "Acción, Suspenso",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 6.4,
+    "comentario": "Aprobada,no me gustó el final",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Rebelde",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 5,
+    "comentario": "No recuerdo nada de esta serie pero la tenia anotada jaja",
+    "recomendacion": "No"
+  },
+  {
+    "titulo": "La Valla",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.1,
+    "comentario": "Punto medio,mirable",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Jeffrey Dahmer: Monstruo",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "La vió todo el mundo,falopita",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Gen V",
+    "plataforma": "Prime Video",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 8.5,
+    "comentario": "The boys pero versión adolescentes,muy buena",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Invencible",
+    "plataforma": "Prime Video",
+    "genero": "Animada,Acción, Ciencia Ficción",
+    "temporadas": "2/3",
+    "estado": "siguiendo",
+    "puntuacion": 7.5,
+    "comentario": "Me falta ver la última temporada,hasta ahora me está gustando",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Fallout",
+    "plataforma": "Prime Video",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7,
+    "comentario": "No tengo idea del juego pero ta muy buena",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Bandidos",
+    "plataforma": "Netflix",
+    "genero": "Acción, Comedia",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "Carrea Ester Espósito,por mí aprobada hasta ahí nomás",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Los caballeros",
+    "plataforma": "Netflix",
+    "genero": "Acción, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.3,
+    "comentario": "Me re enganchó,mafia,acción,comedia,de todo",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Griselda",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.3,
+    "comentario": "MiniSerie que entretiene,aprobada",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Berlín",
+    "plataforma": "Netflix",
+    "genero": "Acción, Thriller",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.5,
+    "comentario": "Aprobada,para ver en familia",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Sagrada Familia",
+    "plataforma": "Netflix",
+    "genero": "Suspenso",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6.1,
+    "comentario": "La 2 temporada es malarda,pero safa",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Cadáveres",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "Serie entretenida para un dia lluvioso",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "One Piece (Live Action)",
+    "plataforma": "Netflix",
+    "genero": "Acción, Fantasía",
+    "temporadas": "1/2",
+    "estado": "siguiendo",
+    "puntuacion": 6.6,
+    "comentario": "Esperando que salga la 2da temporada,hasta ahora me gustó",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Barry",
+    "plataforma": "HBO",
+    "genero": "Comedia",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 7.6,
+    "comentario": "Buenarda,te engancha al toque,muy surealista",
+    "recomendacion": "Sí"
+  },
+{
+    "titulo": "Caleidoscopio",
+    "plataforma": "Netflix",
+    "genero": "Thriller",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5.9,
+    "comentario": "Para pasar el rato",
+    "recomendacion": "Sí"
+  },
+
+  {
+    "titulo": "BoJack Horseman",
+    "plataforma": "Netflix",
+    "genero": "Animada, Comedia",
+    "temporadas": "2/6",
+    "estado": "siguiendo",
+    "puntuacion": 7,
+    "comentario": "La estoy viendo todavía,me gusta",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Vigilante",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5.3,
+    "comentario": "Falopita",
+    "recomendacion": "No"
+  },
+
+  {
+    "titulo": "Moon Knight",
+    "plataforma": "Disney+",
+    "genero": "Acción, Fantasía",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 8,
+    "comentario": "Infravalorada... muy buena",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Ted Lasso",
+    "plataforma": "Apple Tv",
+    "genero": "Comedia, Drama",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 8.6,
+    "comentario": " Cada escena es una lección de vida,me encantó",
+    "recomendacion": "Sí"
+  },
+  {
+    "titulo": "Reacher",
+    "plataforma": "Prime Video",
+    "genero": "Acción",
+    "temporadas": "1/3",
+    "estado": "siguiendo",
+    "puntuacion": 6,
+    "comentario": "Muy normalita... en algún momento la retomaré",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Engaños",
+    "plataforma": "Netflix",
+    "genero": "Suspenso, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.8,
+    "comentario": "Buena miniserie,te mantiene pegado al sillón",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Severance",
+    "plataforma": "Apple Tv",
+    "genero": "Thriller, Ciencia Ficción",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 9.2,
+    "comentario": "La mejor de Apple Tv,buenísima,pero no me gustó como terminó la 2 temp.",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Twisted Metal",
+    "plataforma": "HBO",
+    "genero": "Acción, Comedia",
+    "temporadas": "1/2",
+    "estado": "siguiendo",
+    "puntuacion": 6.4,
+    "comentario": "Entretenida,aprobada",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Pacemaker",
+    "plataforma": "HBO",
+    "genero": "Acción, Comedia",
+    "temporadas": "1/2",
+    "estado": "siguiendo",
+    "puntuacion": 7,
+    "comentario": "Jhon Cena la rompe,comedia negra a full,buenardaa jaja",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Jack Ryan",
+    "plataforma": "Prime Video",
+    "genero": "Acción, Thriller",
+    "temporadas": "4/4",
+    "estado": "Terminada",
+    "puntuacion": 6.7,
+    "comentario": "Aprobada,para verla un domingo a la tarde",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Terapia sin filtro",
+    "plataforma": "Apple Tv",
+    "genero": "Comedia",
+    "temporadas": "1/2",
+    "estado": "Abandonada",
+    "puntuacion": 4.5,
+    "comentario": "Tendría que darle otra chance,no me llamó la atención",
+    "recomendacion": "No"
+  },
+ {
+    "titulo": "The White Lotus",
+    "plataforma": "HBO",
+    "genero": "Drama, Misterio",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 7.3,
+    "comentario": "En lo particular,me gustó mucho,es para verla en pareja",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "El encargado",
+    "plataforma": "Disney+",
+    "genero": "Drama",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 7,
+    "comentario": "Serie argentina para ver en familia, Francella actorazo",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Kaos",
+    "plataforma": "Netflix",
+    "genero": "Fantasía, Comedia",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.1,
+    "comentario": "Falopa pero aprobada,mirable",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Monstruos: Lyle y Erik Menéndez",
+    "plataforma": "Netflix",
+    "genero": "Drama, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "No le presté tanta atención,sorry jaja",
+    "recomendacion": "No"
+  },
+ {
+    "titulo": "Eric",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.6,
+    "comentario": "Buena serie",
+    "recomendacion": "Sí"
+  },
+
+ {
+    "titulo": "Bebé Reno",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.9,
+    "comentario": "Sorprendente y re turbia pero está buena",
+    "recomendacion": "Sí"
+  },
+
+ {
+    "titulo": "El Juego de la Muerte",
+    "plataforma": "Prime Video",
+    "genero": "Fantasía",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.4,
+    "comentario": "Serie koreana que me sorpendió,muy buena",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "The Night Of",
+    "plataforma": "HBO",
+    "genero": "Drama, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.8,
+    "comentario": "Muy buena serie pero el final me dejó con un sabor amargo...",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Black Bird",
+    "plataforma": "Apple Tv",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.1,
+    "comentario": "Ideal para verla un domingo al pedo,aprobada",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Arcane",
+    "plataforma": "Netflix",
+    "genero": "Animada, Fantasía",
+    "temporadas": "1/2",
+    "estado": "siguiendo",
+    "puntuacion": 7.6,
+    "comentario": "Me falta ver la 2da temporada...",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "El Eternauta",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.5,
+    "comentario": "Serie ideal para ver el finde en familia o al pedo",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Adolescencia",
+    "plataforma": "Netflix",
+    "genero": "Thriller",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.5,
+    "comentario": "Muy buena serie,te hace reflexionar",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Zero Day",
+    "plataforma": "Netflix",
+    "genero": "Thriller",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.7,
+    "comentario": "Normalita,me esparaba más pero no me decepcionó",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "El Jardinero",
+    "plataforma": "Netflix",
+    "genero": "Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 4.6,
+    "comentario": "No me gustó",
+    "recomendacion": "No"
+  },
+ {
+    "titulo": "Cassandra",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.3,
+    "comentario": "Una miniserie muy buena,algunas escenas medias forzadas pero sorprende",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Detective Alex Cross",
+    "plataforma": "Prime Video",
+    "genero": "Thriller, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.2,
+    "comentario": "Me gustó pero media aburrida,aprobada pero hasta ahí",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "El Pingüino",
+    "plataforma": "HBO",
+    "genero": "Thriller, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 8.6,
+    "comentario": "Esta es sin dudas una serie espectacular,la verdadera serie de un villano",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Citadel",
+    "plataforma": "Prime Video",
+    "genero": "Thriller, Acción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.2,
+    "comentario": "Aprobada,punto medio...",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "El Chacal",
+    "plataforma": "Disney+",
+    "genero": "Thriller, Acción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.7,
+    "comentario": "A mi me atrapó desde el 1er cap,me gustó",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Silo",
+    "plataforma": "Apple Tv",
+    "genero": "Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.8,
+    "comentario": "Muy buena serie pero demasiado lenta pero más que aprobada",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "See",
+    "plataforma": "Apple Tv",
+    "genero": "Ciencia Ficción",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 8.2,
+    "comentario": "Estuvo muy entretenida, Jason Momoa actorazo",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "The Outsider",
+    "plataforma": "HBO",
+    "genero": "Terror, Thriller, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7.2,
+    "comentario": "Extraña. Ni buena ni mala,en mi opinión media lenteja,final predecible",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Clickbait",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.6,
+    "comentario": "Muy buena miniserie,entretenida",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Operación Marea Negra",
+    "plataforma": "Prime Video",
+    "genero": "Thriller, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.2,
+    "comentario": "Buena miniserie,mirable",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Poker Face",
+    "plataforma": "Otro",
+    "genero": "Misterio, Drama",
+    "temporadas": "1/2",
+    "estado": "siguiendo",
+    "puntuacion": 7.8,
+    "comentario": "Es entretenida, fácil de ver y muy ligera, me re gustó",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "The Studio",
+    "plataforma": "Apple Tv",
+    "genero": "Comedia, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 8.3,
+    "comentario": "Es entretenida y graciosa.Cada capítulo es totalmente diferente y engancha desde el principio",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "9 cuerpos y un secreto",
+    "plataforma": "Otro",
+    "genero": "Thriller, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5.4,
+    "comentario": "Recontra falopa,me esperaba más",
+    "recomendacion": "No"
+  },
+
+ {
+    "titulo": "División Palermo",
+    "plataforma": "Netflix",
+    "genero": "Comedia",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6.4,
+    "comentario": "Muy original,humor argentino con crítica social corta y divertida",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Departamento Q",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.9,
+    "comentario": "Muy buena serie de detectives,engancha más que el Changuito Zeballos",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Amigos y Vecinos",
+    "plataforma": "Apple Tv",
+    "genero": "Comedia, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.5,
+    "comentario": "Aprobada,humor sencillo, buen guión e historia",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Cazador de Demonios",
+    "plataforma": "Prime Video",
+    "genero": "Terror, Drama, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "Falopa pero mirable,safa",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "En el Barro",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 5.2,
+    "comentario": "Mujeres desnudas,Maria Becerra y hasta ahí...",
+    "recomendacion": "No"
+  },
+ {
+    "titulo": "Secret Invasion",
+    "plataforma": "Disney+",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 1,
+    "comentario": "Horrible,prefiero ver un partido de Boca",
+    "recomendacion": "No"
+  },
+ {
+    "titulo": "MobLand",
+    "plataforma": "Paramount",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 9.1,
+    "comentario": "La mejor serie que ví en el 2025,Tom Hardy actorazo,te re engancha",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "American Horror Stories",
+    "plataforma": "Disney+",
+    "genero": "Acción, Ciencia Ficción",
+    "temporadas": "4/12",
+    "estado": "Abandonada",
+    "puntuacion": 8.4,
+    "comentario": "Muy buena serie pero muchas temporadas,infravalorada",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "The 8 Show",
+    "plataforma": "Netflix",
+    "genero": "Thriller",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6,
+    "comentario": "Muy en la línea de El juego del calamar,buena para maratonear",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Presunto Inocente",
+    "plataforma": "Apple Tv",
+    "genero": "Thriller, Drama",
+    "temporadas": "1/1",
+    "estado": "siguiendo",
+    "puntuacion": 6.4,
+    "comentario": "Un drama judicial intenso con mucho suspenso",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "La Hora del Diablo",
+    "plataforma": "Prime Video",
+    "genero": "Thriller, Terror",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6.6,
+    "comentario": "Una serie ingeniosa con un toque inquietante",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Marianne",
+    "plataforma": "Netflix",
+    "genero": "Terror, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.3,
+    "comentario": "Está buena pero tampoco es que te vuela la cabeza",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Materia Oscura",
+    "plataforma": "Apple Tv",
+    "genero": "Ciencia Ficción, Misterio",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.7,
+    "comentario": "Juega con realidades alternativas y ciencia dura,ta buena",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "El Continental: Del mundo de John Wick",
+    "plataforma": "Prime Video",
+    "genero": "Acción, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 6.8,
+    "comentario": "Muy buena Miniserie,sigue toda la acción de John Wick",
+    "recomendacion": "Sí"
+  },
+ {
+    "titulo": "Gotham",
+    "plataforma": "HBO",
+    "genero": "Ciencia Ficción, Misterio",
+    "temporadas": "2/5",
+    "estado": "Abandonada",
+    "puntuacion": 7,
+    "comentario": "Buena serie,tendría que retomarla",
+    "recomendacion": "Sí"
+  },  
+ {
+    "titulo": "El Agente Nocturno",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Acción",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 6.5,
+    "comentario": "La primera temporada es muy buena,despues safa",
+    "recomendacion": "Sí"
+  },  
+ {
+    "titulo": "Six Feet Under",
+    "plataforma": "HBO",
+    "genero": "Drama, Comedia",
+    "temporadas": "1/5",
+    "estado": "Abandonada",
+    "puntuacion": 8.4,
+    "comentario": "Me ví 3 capítulos y esta buena,algún día la retomaré",
+    "recomendacion": "Sí"
+  },  
+ {
+    "titulo": "MindHunter",
+    "plataforma": "Netflix",
+    "genero": "Thriller, Misterio",
+    "temporadas": "2/2",
+    "estado": "Terminada",
+    "puntuacion": 7.2,
+    "comentario": "Bastante interesante, te enganchas fácil en la primera parte",
+    "recomendacion": "Sí"
+  },  
+ {
+    "titulo": "Shogun",
+    "plataforma": "Disney+",
+    "genero": "Acción, Drama",
+    "temporadas": "1/1",
+    "estado": "Terminada",
+    "puntuacion": 7,
+    "comentario": "Muy buena miniserie,refleja la cultra japonesa,muy bien lograda",
+    "recomendacion": "Sí"
+  },  
+ {
+    "titulo": "From",
+    "plataforma": "Disney+",
+    "genero": "Terror, Misterio",
+    "temporadas": "3/3",
+    "estado": "Terminada",
+    "puntuacion": 7.1,
+    "comentario": "La manera en que combina misterio, horror y drama es goood",
+    "recomendacion": "Sí"
+  }, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  {
+    "titulo": "Un Héroe Débil",
+    "plataforma": "Netflix",
+    "genero": "Drama, Acción",
+    "temporadas": "2",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Daredevil",
+    "plataforma": "Disney+",
+    "genero": "Acción, Superhéroes, Crimen",
+    "temporadas": "3",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Devs",
+    "plataforma": "Otro",
+    "genero": "Ciencia Ficción, Thriller, Misterio",
+    "temporadas": "1",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Dark",
+    "plataforma": "Netflix",
+    "genero": "Ciencia Ficción, Misterio, Thriller",
+    "temporadas": "3",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Nine Perfect Strangers",
+    "plataforma": "Prime Video",
+    "genero": "Misterio, Thriller",
+    "temporadas": "2",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Fight Night: The Million Dollar Heist",
+    "plataforma": "Disney+",
+    "genero": "Crimen, Drama, Thriller",
+    "temporadas": "1",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Mindfulness para Asesinos",
+    "plataforma": "Netflix",
+    "genero": "Comedia, Thriller, Drama",
+    "temporadas": "1",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Vikingos",
+    "plataforma": "Netflix",
+    "genero": "Drama, Acción",
+    "temporadas": "6",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Prison Break",
+    "plataforma": "Disney+",
+    "genero": "Thriller, Drama, Acción",
+    "temporadas": "5",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Taboo",
+    "plataforma": "Otro",
+    "genero": "Drama, Misterio, Thriller",
+    "temporadas": "1",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Puerta 7",
+    "plataforma": "Netflix",
+    "genero": "Drama, Thriller",
+    "temporadas": "1",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "La Lista Terminal",
+    "plataforma": "Prime Video",
+    "genero": "Acción, Thriller, Drama",
+    "temporadas": "1",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Dexter",
+    "plataforma": "Paramount+",
+    "genero": "Thriller, Drama",
+    "temporadas": "8",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "La Casa del Dragón",
+    "plataforma": "HBO",
+    "genero": "Fantasía, Drama, Acción",
+    "temporadas": "2",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Los Soprano",
+    "plataforma": "HBO",
+    "genero": "Drama",
+    "temporadas": "6",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "The Last of Us",
+    "plataforma": "HBO",
+    "genero": "Drama, Fantasía",
+    "temporadas": "2",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "The Wire",
+    "plataforma": "HBO ",
+    "genero": "Drama, Acción",
+    "temporadas": "5",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Game of Thrones",
+    "plataforma": "HBO",
+    "genero": "Fantasía, Drama, Acción",
+    "temporadas": "8",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "True Detective",
+    "plataforma": "HBO",
+    "genero": "Thriller, Misterio, Drama",
+    "temporadas": "4",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Fargo",
+    "plataforma": "Otro",
+    "genero": "Thriller, Comedia",
+    "temporadas": "5",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "Succession",
+    "plataforma": "HBO",
+    "genero": "Drama, Satírico, Familiar",
+    "temporadas": "4",
+    "estado": "Pendiente"
+  },
+  {
+    "titulo": "This Is Us",
+    "plataforma": "Disney+",
+    "genero": "Drama, Familiar, Romance",
+    "temporadas": "6",
+    "estado": "Pendiente"
+  }
+  
+
+
+
+
+      // Agregá todas tus demás series aquí
+    ];
+
+    const pendingTable = document.getElementById("pendingSeries");
+    const watchedTable = document.getElementById("watchedSeries");
+    const platformFilter = document.getElementById("platformFilter");
+    const genreFilter = document.getElementById("genreFilter");
+    const ratingFilter = document.getElementById("ratingFilter");
+
+    function render(filterPlatform = "all", filterGenre = "all", filterRating = "all") {
+      pendingTable.innerHTML = "";
+      watchedTable.innerHTML = "";
+
+      series.forEach(s => {
+        // Filtrado de plataforma
+        if(filterPlatform !== "all" && s.plataforma !== filterPlatform) return;
+        // Filtrado de género
+        if(filterGenre !== "all" && !s.genero.includes(filterGenre)) return;
+        // Filtrado por puntuación (solo para series vistas)
+        if(s.estado !== "Pendiente" && s.estado !== "Siguiendo" && filterRating !== "all") {
+          const [min, max] = filterRating.split("-").map(Number);
+          if(s.puntuacion < min || s.puntuacion > max) return;
+        }
+
+        if(s.estado === "Pendiente" || s.estado === "Siguiendo") {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${s.titulo}</td>
+            <td>${s.plataforma}</td>
+            <td>${s.genero}</td>
+            <td>${s.temporadas}</td>
+          `;
+          pendingTable.appendChild(row);
+        } else {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${s.titulo}</td>
+            <td>${s.plataforma}</td>
+            <td>${s.genero}</td>
+            <td>${s.temporadas}</td>
+            <td><span class="status-badge status-${s.estado.toLowerCase()}">${s.estado}</span></td>
+            <td>${s.puntuacion}</td>
+            <td>${s.comentario}</td>
+            <td class="${
+              s.recomendacion === "Sí" ? "recomendada" : 
+              s.recomendacion === "No" ? "no-recomendada" : "regular"
+            }">${
+              s.recomendacion === "Sí" ? "Si" : 
+              s.recomendacion === "No" ? "No" : "Regular"
+            }</td>
+          `;
+          watchedTable.appendChild(row);
+        }
+      });
+    }
+
+    platformFilter.addEventListener("change", () => render(platformFilter.value, genreFilter.value, ratingFilter.value));
+    genreFilter.addEventListener("change", () => render(platformFilter.value, genreFilter.value, ratingFilter.value));
+    ratingFilter.addEventListener("change", () => render(platformFilter.value, genreFilter.value, ratingFilter.value));
+
+    render();
+  </script>
+</body>
+</html>
